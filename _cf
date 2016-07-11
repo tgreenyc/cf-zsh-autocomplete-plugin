@@ -86,6 +86,14 @@ __cf_services() {
 # Output a selectable list of domains
 __cf_domains() {
     declare -a cont_cmd
+    cont_cmd=($(CF_COLOR=false CF_TRACE=false cf domains | awk 'NR>2{print $1}'))
+    if [[  'X$cont_cmd' != 'X' ]]
+        _describe 'DOMAIN' cont_cmd
+}
+
+# Output a selectable list of domains
+__cf_priv_domains() {
+    declare -a cont_cmd
     cont_cmd=($(CF_COLOR=false CF_TRACE=false cf domains | grep -v shared | awk 'NR>2{print $1}'))
     if [[  'X$cont_cmd' != 'X' ]]
         _describe 'DOMAIN' cont_cmd
@@ -478,7 +486,7 @@ __create-domain() {
 
 __delete-domain() {
   _arguments \
-    '1:domain:__cf_domains' \
+    '1:domain:__cf_priv_domains' \
     '-f[Force deletion without confirmation]'
 }
 
@@ -529,7 +537,6 @@ __delete-route() {
   _arguments \
     '1:domain:__cf_domains' \
     '-n=[Hostname]:hostname:__cf_hostnames:' \
-    '-f[Force deletion without confirmation]'
 }
 
 __delete-orphaned-routes() {
